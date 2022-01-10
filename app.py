@@ -1,10 +1,6 @@
 import os 
 import streamlit as st
 from alpha_vantage.timeseries import TimeSeries
-import pandas as pd
-import requests
-import json
-from glom import glom
 from datetime import datetime
 from bokeh.plotting import figure
 
@@ -23,8 +19,10 @@ if st.sidebar.text_input("Enter the stock's abbreviation (e.g. MSFT):", key='tic
 # Help at https://devcenter.heroku.com/articles/config-vars
 # API key must be named ALPHAVANTAGE_API_KEY
 ts = TimeSeries(output_format='pandas')
-data, meta_data = ts.get_daily(ticker, outputsize='full')
-# you should use get_daily_adjusted but this is premium and I don't want to pay :)
+try: 
+     data, meta_data = ts.get_daily(ticker, outputsize='full')
+except NameError:
+     st.error('The API call has failed because that ticker does not exist.')
 
 st.sidebar.write("Select the time period you wish to plot:")
 period = st.sidebar.slider('Date Range',
